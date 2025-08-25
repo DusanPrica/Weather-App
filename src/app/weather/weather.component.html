@@ -1,0 +1,79 @@
+<div class="background_image" [style.backgroundImage]="'url(' + backgroundImage + ')'" [class.loading]="isImageLoading"></div>
+
+<div class="app_container">
+  <div class="search_container">
+    <div class="search_input_wrapper">
+      <input 
+        #searchInput
+        type="text" 
+        [(ngModel)]="city" 
+        (input)="filterCities()"
+        (keydown.enter)="$event.preventDefault(); onSearch()"
+        (blur)="onBlur()"
+        (focus)="onFocus()"
+        placeholder="Enter city name..."
+        class="search_input"
+      >
+      
+      <div *ngIf="showDropdown" class="cities_dropdown">
+        <div 
+          *ngFor="let city of filteredCities; let i = index" 
+          (mousedown)="selectCity(city); $event.preventDefault()"
+          [class.selected]="i === selectedCityIndex"
+          class="city_option"
+        >
+          {{ city }}
+        </div>
+      </div>
+    </div>
+    
+    <button (click)="onSearch(); $event.preventDefault()" class="search_button">Search</button> 
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Loading weather data...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="weather && !isLoading" class="weather_card">
+    <div class="weather_header">
+      <h1>Weather Forecast</h1>
+      <h2>{{ weather.name }}</h2>
+      <p class="last_updated">Last updated: {{ now | date:'medium' }}</p>
+    </div>
+    
+    <div class="weather_details">
+      <div class="weather_detail">
+        <span class="weather_icon">{{ getWeatherIcon(weather.weather[0].main) }}</span>
+        <span>{{ weather.weather[0].description | titlecase }}</span>
+      </div>
+      
+      <div class="weather_detail">
+        <span class="weather_icon">🌡️</span>
+        <span>Temperature: {{ weather.main.temp }}°C</span>
+      </div>
+      
+      <div class="weather_detail">
+        <span class="weather_icon">💧</span>
+        <span>Humidity: {{ weather.main.humidity }}%</span>
+      </div>
+      
+      <div class="weather_detail">
+        <span class="weather_icon">💨</span>
+        <span>Wind Speed: {{ weather.wind.speed }} km/h</span>
+      </div>
+      
+      <div class="weather_detail">
+        <span class="weather_icon">📊</span>
+        <span>Feels like: {{ weather.main.feels_like }}°C</span>
+      </div>
+    </div>
+
+    <div class="refresh_info">
+      <p>Data auto-refreshes every 10 minutes</p>
+    </div>
+  </div>
+</div>
